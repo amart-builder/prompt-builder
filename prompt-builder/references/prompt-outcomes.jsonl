@@ -1,0 +1,2 @@
+# prompt-outcomes.jsonl — Outcome log for prompt-builder. Schema: id, timestamp, task_type, framework, soul, emotion_prompt_used, track_record_injected, turns_to_success, outcome (success|partial|fail), notes, lesson_ref
+# Created: 2026-02-21. Review monthly: find lowest-performing framework and revise template.

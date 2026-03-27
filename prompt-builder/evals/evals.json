@@ -1,0 +1,74 @@
+[
+  {
+    "query": "/prompt Create a marketing strategy for a new product",
+    "should_trigger": true
+  },
+  {
+    "query": "Help me prompt this: I need a summary of recent tech trends",
+    "should_trigger": true
+  },
+  {
+    "query": "Write me a prompt for a blog post about sustainable living",
+    "should_trigger": true
+  },
+  {
+    "query": "Turn this idea into a structured prompt: Increasing employee engagement",
+    "should_trigger": true
+  },
+  {
+    "query": "Can you help me draft a prompt for analyzing customer feedback?",
+    "should_trigger": true
+  },
+  {
+    "query": "I need a prompt that will guide me to write a compelling sales pitch",
+    "should_trigger": true
+  },
+  {
+    "query": "Write a prompt for exploring innovative solutions to climate change",
+    "should_trigger": true
+  },
+  {
+    "query": "How can I phrase a prompt for a presentation on automated systems?",
+    "should_trigger": true
+  },
+  {
+    "query": "Transform my idea about remote work into a prompt",
+    "should_trigger": true
+  },
+  {
+    "query": "What should I include in a prompt for planning a charity event?",
+    "should_trigger": true
+  },
+  {
+    "query": "Can you queue up my emails in Himalaya?",
+    "should_trigger": false
+  },
+  {
+    "query": "Search for the latest blog updates about technology.",
+    "should_trigger": false
+  },
+  {
+    "query": "Add a reminder for my meeting next week in Apple Reminders.",
+    "should_trigger": false
+  },
+  {
+    "query": "I want to create a new note in Bear.",
+    "should_trigger": false
+  },
+  {
+    "query": "What's the weather like today?",
+    "should_trigger": false
+  },
+  {
+    "query": "Tell me how to improve my coding skills.",
+    "should_trigger": false
+  },
+  {
+    "query": "Help me craft an email response for my IMAP?",
+    "should_trigger": false
+  },
+  {
+    "query": "What are some good practices for team collaboration?",
+    "should_trigger": false
+  }
+]
