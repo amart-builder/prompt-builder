@@ -1,10 +1,10 @@
-# /prompt — turn a brain-dump into a great result
+# /prompt: turn a brain-dump into a great result
 
 A Claude skill that takes your messy, unorganized thoughts and turns them into an
 excellent outcome: **clarify → engineer the prompt → run it → verify.**
 
-You don't write the perfect prompt. You brain-dump everything in your head — messy is
-fine — and the skill builds the clean, complete prompt that modern Claude does its best
+You don't write the perfect prompt. You brain-dump everything in your head (messy is
+fine), and the skill builds the clean, complete prompt that modern Claude does its best
 work from, then runs it for you.
 
 ## What it does
@@ -12,9 +12,9 @@ work from, then runs it for you.
 When you type `/prompt` and dump your thoughts, the skill:
 
 1. **Reads the dump** and works out the real goal, the deliverable, and the audience.
-2. **Clarifies only if it matters** — asks a question *only* when a missing detail would
+2. **Clarifies only if it matters,** asking a question *only* when a missing detail would
    change the result. A clear dump passes straight through with zero questions.
-3. **Engineers the prompt** using current prompt-engineering research — right-sized to the
+3. **Engineers the prompt** using current prompt-engineering research, right-sized to the
    task, with explicit output format, the *why* behind the request, and an escape clause.
 4. **Runs it and self-checks** the result against your original intent before showing you.
 
@@ -29,7 +29,7 @@ that don't actually help modern reasoning models:
 - ❌ No reflexive "think step by step" (adds latency on models that already reason)
 - ✅ Always keeps explicit output-format instructions, context/motivation, and right-sizing
 
-It defaults to the *smallest high-signal prompt* the task needs — not the longest.
+It defaults to the *smallest high-signal prompt* the task needs, not the longest.
 
 ## Install
 
@@ -54,7 +54,7 @@ After it finishes, **start a new chat** so `/prompt` appears in autocomplete.
 
 ### OpenClaw
 
-The same `SKILL.md` format works as an OpenClaw skill — copy the `prompt/` directory into
+The same `SKILL.md` format works as an OpenClaw skill. Copy the `prompt/` directory into
 your OpenClaw skills folder.
 
 ## How to use it
@@ -62,7 +62,7 @@ your OpenClaw skills folder.
 You don't need it every time. Use it **when the output really matters.**
 
 ```
-/prompt  then brain-dump everything in your head — messy is fine.
+/prompt  then brain-dump everything in your head. Messy is fine.
 ```
 
 Example dump:
@@ -70,7 +70,7 @@ Example dump:
 > "ugh i need to email the practice owner who went quiet after our call, keep it warm,
 > remind her we have two other buyers interested but don't sound pushy"
 
-The skill turns that into a clean, complete prompt and writes the email — checking it
+The skill turns that into a clean, complete prompt and writes the email, checking it
 against your intent before showing you.
 
 ## What's in here
