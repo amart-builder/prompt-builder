@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Talk to Claude: A Field Guide</title>
+<style>
+  :root {
+    --bg: #FFFFFF;
+    --ink: #1D1D1F;
+    --ink-2: #3A3A3E;
+    --muted: #86868B;
+    --rule-faint: #E8E8ED;
+    --rule: #D2D2D7;
+    --accent: #0066CC;
+    --accent-deep: #003E80;
+    --accent-wash: #F0F6FD;
+    --gold: #A87833;
+    --gold-wash: #FBF7F0;
+    --rose: #B8475A;
+    --rose-wash: #FCF3F4;
+    --green: #2E7D5B;
+    --green-wash: #F0F8F4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern", "liga", "calt";
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.65;
+    background-image: radial-gradient(circle at 1px 1px, rgba(29,29,31,0.04) 1px, transparent 0);
+    background-size: 30px 30px;
+  }
+
+  /* ===== TOP NAV ===== */
+  .nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 60px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 max(2rem, 5vw);
+    background: rgba(255,255,255,0.82);
+    backdrop-filter: saturate(180%) blur(14px);
+    -webkit-backdrop-filter: saturate(180%) blur(14px);
+    border-bottom: 1px solid var(--rule-faint);
+  }
+  .nav-brand {
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .nav-links {
+    display: flex;
+    gap: 1.75rem;
+  }
+  .nav-links a {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    letter-spacing: -0.01em;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    width: 0%;
+    background: var(--accent);
+    z-index: 101;
+    transition: width 0.1s linear;
+  }
+  @media (max-width: 720px) { .nav-links { display: none; } }
+
+  /* ===== LAYOUT ===== */
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 max(1.5rem, 5vw);
+  }
+  section { padding: 5rem 0; }
+  section + section { border-top: 1px solid var(--rule-faint); }
+
+  .kicker {
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .kicker::before {
+    content: "";
+    width: 22px; height: 1px;
+    background: var(--accent);
+  }
+  .kicker.gold { color: var(--gold); }
+  .kicker.gold::before { background: var(--gold); }
+
+  h1 {
+    font-size: clamp(2.75rem, 7vw, 4.75rem);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    font-weight: 600;
+  }
+  h2 {
+    font-size: clamp(1.875rem, 4vw, 2.75rem);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+  h3 {
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+  p {
+    font-size: 1.1875rem;
+    color: var(--ink-2);
+    margin-bottom: 1.25rem;
+    letter-spacing: -0.011em;
+  }
+  p:last-child { margin-bottom: 0; }
+  strong { color: var(--ink); font-weight: 600; }
+  em { font-style: italic; color: var(--ink); }
+  .accent-text { color: var(--accent); }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 0 5rem;
+    border-top: none;
+  }
+  .hero h1 { margin-bottom: 1.75rem; }
+  .hero .lede {
+    font-size: clamp(1.25rem, 2vw, 1.5rem);
+    color: var(--muted);
+    line-height: 1.45;
+    max-width: 32ch;
+    margin-bottom: 2.5rem;
+  }
+  .hero-by {
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule-faint);
+  }
+  .hero-by strong { color: var(--ink); font-weight: 600; }
+  .hero-scroll {
+    margin-top: 3.5rem;
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    animation: bob 2.4s ease-in-out infinite;
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); opacity: 0.6; }
+    50% { transform: translateY(4px); opacity: 1; }
+  }
+
+  /* ===== BIG IDEA CALLOUT ===== */
+  .bigidea {
+    background: var(--accent-wash);
+    border-radius: 16px;
+    padding: 2.5rem;
+    margin: 2rem 0 0;
+  }
+  .bigidea p { color: var(--accent-deep); margin-bottom: 0; }
+  .bigidea .test {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(0,102,204,0.15);
+    font-size: 1.0625rem;
+  }
+
+  /* ===== INGREDIENTS ===== */
+  .ingredient {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 1.5rem;
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--rule-faint);
+  }
+  .ingredient:last-child { border-bottom: none; }
+  .ingredient-num {
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--accent);
+    line-height: 1.4;
+  }
+  .ingredient p { font-size: 1.0625rem; margin-bottom: 0.85rem; }
+  .micro {
+    background: #F7F7F8;
+    border-left: 2px solid var(--rule);
+    border-radius: 0 8px 8px 0;
+    padding: 0.85rem 1.1rem;
+    font-size: 0.9375rem;
+    color: var(--ink-2);
+    line-height: 1.5;
+  }
+  .micro .lbl {
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+  .micro .arrow { color: var(--accent); font-weight: 600; }
+
+  /* ===== ANATOMY (prompt skeleton) ===== */
+  .anatomy {
+    border: 1px solid var(--rule);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-top: 2.25rem;
+    background: #FFFFFF;
+  }
+  .anatomy-row {
+    display: grid;
+    grid-template-columns: 44px 132px 1fr;
+    gap: 0.5rem 1.25rem;
+    align-items: baseline;
+    padding: 1.5rem 1.75rem;
+    border-top: 1px solid var(--rule-faint);
+  }
+  .anatomy-row:first-child { border-top: none; }
+  .anatomy-num {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 1.5px solid var(--accent);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 0.9rem;
+    font-weight: 600;
+    align-self: center;
+  }
+  .anatomy-label {
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--ink);
+    align-self: center;
+  }
+  .anatomy-desc {
+    font-size: 1.0625rem;
+    color: var(--ink-2);
+    align-self: center;
+  }
+  @media (max-width: 620px) {
+    .anatomy-row { grid-template-columns: 44px 1fr; }
+    .anatomy-label { grid-column: 2; }
+    .anatomy-desc { grid-column: 2; }
+  }
+
+  .doc-callout {
+    background: var(--accent-wash);
+    border-radius: 14px;
+    padding: 1.5rem 1.75rem;
+    margin-top: 1.5rem;
+  }
+  .doc-callout .lbl {
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .doc-callout p { color: var(--accent-deep); margin-bottom: 0; font-size: 1.0625rem; }
+
+  .craft-transition {
+    margin: 3.5rem 0 0;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--rule-faint);
+  }
+
+  /* ===== BEFORE / AFTER ===== */
+  .ba { margin-top: 1rem; }
+  .ba-card {
+    border-radius: 14px;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1.25rem;
+  }
+  .ba-card.before { background: var(--rose-wash); border: 1px solid rgba(184,71,90,0.18); }
+  .ba-card.after { background: var(--green-wash); border: 1px solid rgba(46,125,91,0.18); }
+  .ba-tag {
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .ba-card.before .ba-tag { color: var(--rose); }
+  .ba-card.after .ba-tag { color: var(--green); }
+  .ba-quote {
+    font-size: 1.0625rem;
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  .ba-quote.dump { font-style: italic; color: var(--ink-2); }
+  .ba-quote p { font-size: 1.0625rem; color: var(--ink); margin-bottom: 0.85rem; }
+  .ba-quote p:last-child { margin-bottom: 0; }
+  .checks {
+    margin-top: 1.5rem;
+    display: grid;
+    gap: 0.6rem;
+  }
+  .check {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 0.75rem;
+    font-size: 0.9375rem;
+    color: var(--ink-2);
+    align-items: baseline;
+  }
+  .check .mark { color: var(--green); font-weight: 700; }
+  .check strong { color: var(--ink); }
+  .takeaway {
+    margin-top: 1.5rem;
+    font-size: 1.0625rem;
+    color: var(--ink);
+  }
+
+  /* ===== MYTHS ===== */
+  .myth {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 1rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--rule-faint);
+    align-items: start;
+  }
+  .myth:last-of-type { border-bottom: none; }
+  .myth .x {
+    color: var(--rose);
+    font-weight: 700;
+    font-size: 1.1rem;
+    line-height: 1.5;
+  }
+  .myth h3 { margin-bottom: 0.25rem; }
+  .myth p { font-size: 1rem; margin-bottom: 0; }
+  .myth-foot {
+    margin-top: 2rem;
+    background: var(--gold-wash);
+    border-radius: 14px;
+    padding: 1.75rem 2rem;
+  }
+  .myth-foot p { color: var(--ink); margin-bottom: 0; font-size: 1.0625rem; }
+
+  /* ===== PROMPT SKILL FEATURE ===== */
+  .feature {
+    background: var(--ink);
+    color: #F4F4F5;
+    border-radius: 20px;
+    padding: 3rem;
+    margin-top: 1rem;
+  }
+  .feature h2 { color: #FFFFFF; }
+  .feature p { color: rgba(244,244,245,0.78); }
+  .feature .cmd {
+    display: inline-block;
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    background: rgba(94,160,255,0.16);
+    color: #6FB1FF;
+    padding: 0.15em 0.5em;
+    border-radius: 6px;
+    font-size: 0.92em;
+    font-weight: 500;
+  }
+  .feature .flow {
+    margin-top: 2rem;
+    display: grid;
+    gap: 1rem;
+  }
+  .flow-step {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .flow-lbl {
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #6FB1FF;
+  }
+  .flow-step .body {
+    font-size: 1rem;
+    color: rgba(244,244,245,0.92);
+    line-height: 1.5;
+  }
+  .flow-step .body.dump { font-style: italic; color: rgba(244,244,245,0.7); }
+  .flow-arrow { text-align: center; color: rgba(255,255,255,0.3); font-size: 1.2rem; }
+  .feature .when {
+    margin-top: 2rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    font-size: 1.0625rem;
+    color: rgba(244,244,245,0.92);
+  }
+  .feature .when strong { color: #FFFFFF; }
+
+  /* ===== INSTALL ===== */
+  .steps { counter-reset: step; margin-top: 1rem; }
+  .step {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 1.25rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--rule-faint);
+    align-items: start;
+  }
+  .step:last-child { border-bottom: none; }
+  .step-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+  }
+  .step-body p { font-size: 1.0625rem; margin-bottom: 0; }
+  .step-body .sub { font-size: 0.95rem; color: var(--muted); margin-top: 0.3rem; }
+
+  .codeblock {
+    position: relative;
+    background: #1D1D1F;
+    border-radius: 14px;
+    padding: 1.5rem 1.5rem;
+    margin-top: 1.25rem;
+    overflow: hidden;
+  }
+  .codeblock pre {
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: #E4E4E7;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 8px;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.75rem;
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,0.18); }
+  .copy-btn.copied { background: var(--green); border-color: var(--green); }
+
+  .repo-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.75rem;
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 0.875rem;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    transition: all 0.2s ease;
+  }
+  .repo-link:hover { border-color: var(--accent); background: var(--accent-wash); }
+
+  /* ===== FOOTER ===== */
+  footer {
+    padding: 4rem 0 6rem;
+    border-top: 1px solid var(--rule-faint);
+  }
+  footer p {
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+    line-height: 1.8;
+  }
+  footer strong { color: var(--ink); font-weight: 600; }
+
+  /* ===== REVEAL ===== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+</style>
+<noscript>
+  <!-- If JS is disabled (e.g. locked-down corporate browser), show everything. -->
+  <style> .reveal { opacity: 1 !important; transform: none !important; } </style>
+</noscript>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<nav class="nav">
+  <div class="nav-brand">Martin Healthcare Advisors</div>
+  <div class="nav-links">
+    <a href="#idea">The Idea</a>
+    <a href="#structure">Structure</a>
+    <a href="#example">Example</a>
+    <a href="#myths">Skip These</a>
+    <a href="#shortcut">The Shortcut</a>
+    <a href="#setup">Get Set Up</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="kicker">A Field Guide · Working with AI</div>
+    <h1>How to talk<br>to Claude.</h1>
+    <div class="lede">Better prompts, better output. What a good prompt is made of, a few real examples, and a shortcut for when it really counts.</div>
+    <div class="hero-by">Prepared by <strong>Alex Martin</strong> for the Martin Healthcare Advisors team</div>
+    <div class="hero-scroll">Scroll to begin ↓</div>
+  </section>
+
+  <!-- THE IDEA -->
+  <section id="idea">
+    <div class="kicker reveal">If You Remember One Thing</div>
+    <h2 class="reveal">Talk to it like a brilliant new hire on day one.</h2>
+    <p class="reveal">Claude is sharp, fast, and capable, but on your request it knows <em>nothing</em> about your deals, your clients, or the way you like things done. It can't read your mind. Everything that's obvious to you, like who's going to read this, what "good" looks like, and how long it should be, has to be said out loud.</p>
+    <div class="bigidea reveal">
+      <p><strong>The test:</strong> if you handed your request to a smart new analyst who'd never seen your business, would they know exactly what to do?</p>
+      <p class="test">If the answer is no, Claude won't either. The whole craft of prompting is just closing that gap by telling it what the new hire would need to know.</p>
+    </div>
+  </section>
+
+  <!-- THE RECIPE -->
+  <section id="structure">
+    <div class="kicker reveal">The Structure</div>
+    <h2 class="reveal">Every good prompt has the same skeleton.</h2>
+    <p class="reveal">Four parts, top to bottom. Fill them in and you've got a strong prompt before you've even thought about technique.</p>
+
+    <div class="anatomy reveal">
+      <div class="anatomy-row">
+        <div class="anatomy-num">1</div>
+        <div class="anatomy-label">Goal</div>
+        <div class="anatomy-desc">What you want, and the format you want it back in.</div>
+      </div>
+      <div class="anatomy-row">
+        <div class="anatomy-num">2</div>
+        <div class="anatomy-label">Context</div>
+        <div class="anatomy-desc">The why, the situation, and who it's for.</div>
+      </div>
+      <div class="anatomy-row">
+        <div class="anatomy-num">3</div>
+        <div class="anatomy-label">Material</div>
+        <div class="anatomy-desc">Any document or example you're working from.</div>
+      </div>
+      <div class="anatomy-row">
+        <div class="anatomy-num">4</div>
+        <div class="anatomy-label">The Ask</div>
+        <div class="anatomy-desc">Your actual question or instruction, placed last.</div>
+      </div>
+    </div>
+
+    <div class="doc-callout reveal">
+      <span class="lbl">Working from a document?</span>
+      <p>Don't retype it. Drag the file straight into the chat box, or use the attach button, then ask your question underneath. Claude reads the whole thing. (If you'd rather paste the text in, paste the document first and put your question at the end.) Perfect for a CIM, a contract, or a financials packet.</p>
+    </div>
+
+    <div class="craft-transition reveal">
+      <div class="kicker">The Craft</div>
+      <h2>Five habits that make each part land.</h2>
+      <p>Those four parts are the skeleton. These five habits are what separate a weak version of each from a strong one.</p>
+    </div>
+
+    <div class="ingredient reveal">
+      <div class="ingredient-num">1</div>
+      <div>
+        <h3>Be specific.</h3>
+        <p>Spell out the format, the length, and the scope. Vague in, vague out.</p>
+        <div class="micro">
+          <span class="lbl">Instead of</span>
+          "Summarize this CIM." <span class="arrow">→</span> "Summarize this CIM as a one-page brief, five bullets, skimmable in 60 seconds."
+        </div>
+      </div>
+    </div>
+
+    <div class="ingredient reveal">
+      <div class="ingredient-num">2</div>
+      <div>
+        <h3>Always give the why.</h3>
+        <p>The reason is what lets Claude make a hundred small judgment calls the way you would. It's the difference between a generic answer and yours.</p>
+        <div class="micro">
+          <span class="lbl">Instead of</span>
+          "Keep it short." <span class="arrow">→</span> "Keep it short. It's for a buyer who gets fifty of these a week and reads on his phone."
+        </div>
+      </div>
+    </div>
+
+    <div class="ingredient reveal">
+      <div class="ingredient-num">3</div>
+      <div>
+        <h3>Show an example of "good."</h3>
+        <p>Got a teaser or an email you loved? Paste it in and say "match this style." One good example beats a paragraph of description.</p>
+        <div class="micro">
+          <span class="lbl">Try</span>
+          "Here's a teaser that landed well last quarter. Write the new one in the same voice and structure." <span class="arrow">→</span> <em>paste the old one</em>
+        </div>
+      </div>
+    </div>
+
+    <div class="ingredient reveal">
+      <div class="ingredient-num">4</div>
+      <div>
+        <h3>Tell it to ask.</h3>
+        <p>The single best line for avoiding confident, wrong answers. End your request with it.</p>
+        <div class="micro">
+          <span class="lbl">Add</span>
+          "If anything's unclear or you're missing information you need, ask me instead of guessing."
+        </div>
+      </div>
+    </div>
+
+    <div class="ingredient reveal">
+      <div class="ingredient-num">5</div>
+      <div>
+        <h3>It takes you literally.</h3>
+        <p>Opus does exactly what you say. Tell it to act, not advise, and name the scope so it doesn't stop halfway.</p>
+        <div class="micro">
+          <span class="lbl">Instead of</span>
+          "Can you suggest some edits?" <span class="arrow">→</span> "Rewrite the second paragraph to be warmer, and check every section, not just the first."
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXAMPLE -->
+  <section id="example">
+    <div class="kicker reveal">See It In Action</div>
+    <h2 class="reveal">Same task. Two very different results.</h2>
+    <p class="reveal">Say you're re-engaging a practice owner who went quiet after a first call. Here's the lazy version, and the version that gets a usable email on the first try.</p>
+
+    <div class="ba">
+      <div class="ba-card before reveal">
+        <div class="ba-tag">✗ The lazy version</div>
+        <div class="ba-quote">"Write an email to Dr. Sarah Chen about selling her practice."</div>
+      </div>
+
+      <div class="ba-card after reveal">
+        <div class="ba-tag">✓ The version that works</div>
+        <div class="ba-quote">
+          <p>"I'm following up with Dr. Sarah Chen, who owns a physical therapy practice in Denver. We had a great first call two weeks ago about a potential sale, and then she went quiet. I want to gently re-engage her, with no pressure.</p>
+          <p>What matters: she's emotional about selling. She built this practice over twenty years. So the tone needs to be warm and respectful, never salesy. We do have two other interested buyers, which I'd like to mention as a soft nudge, but it can't feel like a threat.</p>
+          <p>Write a short email, four to six sentences, no subject line. Human and friendly. If you need any details from me to make it land, ask before writing."</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="checks reveal">
+      <div class="check"><span class="mark">✓</span><span><strong>What &amp; who:</strong> re-engage Dr. Chen after she went quiet</span></div>
+      <div class="check"><span class="mark">✓</span><span><strong>The why:</strong> she's emotional; she built it over twenty years</span></div>
+      <div class="check"><span class="mark">✓</span><span><strong>Tone &amp; audience:</strong> warm, respectful, never salesy</span></div>
+      <div class="check"><span class="mark">✓</span><span><strong>Format:</strong> four to six sentences, no subject line</span></div>
+      <div class="check"><span class="mark">✓</span><span><strong>The out:</strong> ask if you're missing anything</span></div>
+    </div>
+
+    <p class="takeaway reveal">The second one took thirty extra seconds to write. It saves you three rounds of "no, not like that."</p>
+  </section>
+
+  <!-- MYTHS -->
+  <section id="myths">
+    <div class="kicker reveal">Skip These</div>
+    <h2 class="reveal">Tricks that don't actually work.</h2>
+    <p class="reveal">You may have heard "hacks" for getting more out of AI. Most do nothing on a model this capable, and a few make it worse. The research is clear; don't bother with these:</p>
+
+    <div class="myth reveal">
+      <div class="x">✗</div>
+      <div>
+        <h3>"You are a world-class expert..."</h3>
+        <p>Telling Claude to pretend it's an expert doesn't make it more accurate. (It can help set the <em>tone</em>, but not the correctness.)</p>
+      </div>
+    </div>
+    <div class="myth reveal">
+      <div class="x">✗</div>
+      <div>
+        <h3>Bribes and threats.</h3>
+        <p>"I'll tip you $200," "this is CRITICAL," "or I'll get fired." Controlled studies show zero benefit. Claude doesn't respond to pressure.</p>
+      </div>
+    </div>
+    <div class="myth reveal">
+      <div class="x">✗</div>
+      <div>
+        <h3>"Think step by step."</h3>
+        <p>Older advice from an earlier era of AI. Today's Claude already reasons on its own, so adding this mostly just slows it down.</p>
+      </div>
+    </div>
+    <div class="myth reveal">
+      <div class="x">✗</div>
+      <div>
+        <h3>ALL CAPS and !!!.</h3>
+        <p>Over-the-top urgency tends to backfire and make the output worse.</p>
+      </div>
+    </div>
+
+    <div class="myth-foot reveal">
+      <p>What actually works is refreshingly boring: <strong>be clear, give context, name the format.</strong> That's the whole game.</p>
+    </div>
+  </section>
+
+  <!-- THE SHORTCUT -->
+  <section id="shortcut">
+    <div class="kicker gold reveal">The Shortcut</div>
+    <h2 class="reveal">Or, don't remember any of this.</h2>
+    <p class="reveal">Here's the secret: you don't have to do any of this by hand. We've set up a tool that does it for you.</p>
+
+    <div class="feature reveal">
+      <h2>Meet <span class="cmd">/prompt</span></h2>
+      <p>When you have something that really matters (an important email, a document to digest, anything where you want a genuinely great result), type <span class="cmd">/prompt</span> and then <strong style="color:#fff">brain-dump everything in your head.</strong> Messy is fine. Half-sentences are fine.</p>
+      <p>It reads your dump, fills in everything above for you, and writes a strong, complete prompt. Then it shows you that prompt and waits for your go-ahead before running anything, so you stay in control. Once you say go, it runs the prompt and double-checks the result against what you actually meant before showing you.</p>
+
+      <div class="flow">
+        <div class="flow-step">
+          <div class="flow-lbl">You type</div>
+          <div class="body dump">/prompt ugh i need to email the practice owner who went quiet after our call, keep it warm, remind her we've got two other buyers interested but don't sound pushy</div>
+        </div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-step">
+          <div class="flow-lbl">It shows you the prompt</div>
+          <div class="body">It turns your dump into a clean, complete prompt and asks, "Run this, or want to tweak it first?" Nothing happens until you say go.</div>
+        </div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-step">
+          <div class="flow-lbl">You get back</div>
+          <div class="body">A finished email that's warm, mentions the other buyers as a soft nudge, and doesn't sound desperate. Checked before you ever see it.</div>
+        </div>
+      </div>
+
+      <div class="when">
+        <strong>When to use it:</strong> not for quick things ("what's 15% of $4.2M?"). Use it when the output matters and you want it to be excellent.
+      </div>
+    </div>
+  </section>
+
+  <!-- SETUP -->
+  <section id="setup">
+    <div class="kicker reveal">Get Set Up</div>
+    <h2 class="reveal">Two minutes, one time.</h2>
+    <p class="reveal">Install the <span style="font-family:'SF Mono',monospace;color:var(--accent)">/prompt</span> tool once and it's there whenever you need it.</p>
+
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <p>Open a <strong>new chat</strong> in Claude.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <p>Paste in the setup instructions below and send. Claude will install it for you.</p>
+          <div class="codeblock">
+            <button class="copy-btn" id="copyBtn">Copy</button>
+<pre id="installPrompt">Install a custom skill called "prompt" from GitHub:
+
+1. Clone https://github.com/amart-builder/prompt-builder into a temp folder.
+2. Create the directory ~/.claude/skills/ if it doesn't exist.
+3. Copy the repo's prompt/ folder to ~/.claude/skills/prompt
+   (so the files end up at ~/.claude/skills/prompt/SKILL.md and
+   ~/.claude/skills/prompt/reference/prompt-engineering.md).
+4. Confirm both files are in place and tell me the skill is installed.</pre>
+          </div>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <p>When it says it's done, <strong>start a fresh chat.</strong> Type <span style="font-family:'SF Mono',monospace">/</span> and you'll see <span style="font-family:'SF Mono',monospace;color:var(--accent)">prompt</span> in the list.</p>
+          <p class="sub">A restart is what makes the new tool show up, just like closing and reopening an app after an update.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <p>From then on: <strong>/prompt + brain dump,</strong> whenever it counts.</p>
+        </div>
+      </div>
+    </div>
+
+    <a class="repo-link reveal" href="https://github.com/amart-builder/prompt-builder" target="_blank" rel="noopener">↗ github.com/amart-builder/prompt-builder</a>
+  </section>
+
+  <footer>
+    <p><strong>How to Talk to Claude</strong>: A Field Guide<br>
+    Prepared by Alex Martin for the Martin Healthcare Advisors team.<br>
+    Based on Anthropic's prompting guidance and current prompt-engineering research.</p>
+  </footer>
+
+</div>
+
+<script>
+  // Progress bar
+  const progress = document.getElementById('progress');
+  const onScroll = () => {
+    const h = document.documentElement;
+    const scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight);
+    progress.style.width = (scrolled * 100) + '%';
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px 0px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Copy button
+  const btn = document.getElementById('copyBtn');
+  const promptText = document.getElementById('installPrompt').textContent;
+  btn.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(promptText);
+      btn.textContent = 'Copied ✓';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    } catch (err) {
+      // Fallback for file:// where clipboard API may be blocked
+      const r = document.createRange();
+      r.selectNode(document.getElementById('installPrompt'));
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(r);
+      try { document.execCommand('copy'); btn.textContent = 'Copied ✓'; btn.classList.add('copied'); setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000); } catch (e2) {}
+      window.getSelection().removeAllRanges();
+    }
+  });
+</script>
+
+</body>
+</html>
