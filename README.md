@@ -1,111 +1,88 @@
-# Prompt Builder — OpenClaw Skill
+# /prompt — turn a brain-dump into a great result
 
-Turn 5 words into a 400-line execution-ready prompt.
+A Claude skill that takes your messy, unorganized thoughts and turns them into an
+excellent outcome: **clarify → engineer the prompt → run it → verify.**
 
-This is an [OpenClaw](https://openclaw.ai) skill that transforms rough, incomplete requests into structured prompts with the right framework, context injection, and explicit success criteria.
+You don't write the perfect prompt. You brain-dump everything in your head — messy is
+fine — and the skill builds the clean, complete prompt that modern Claude does its best
+work from, then runs it for you.
 
-## What It Does
+## What it does
 
-You give it something vague like:
-> "build me a landing page"
+When you type `/prompt` and dump your thoughts, the skill:
 
-It outputs a complete prompt with:
-- **Task classification** — coding, research, writing, planning, debugging, creative, outreach, orchestration, or data analysis
-- **Expert identity** ("soul") — selects from 25+ expert personas backed by research on persona-based prompting
-- **Framework template** — structured approach specific to the task type
-- **Context injection** — pulls relevant system context automatically
-- **Success criteria** — explicit, measurable, so you know when it's done
-- **EmotionPrompt calibration** — adjusts intensity based on stakes
+1. **Reads the dump** and works out the real goal, the deliverable, and the audience.
+2. **Clarifies only if it matters** — asks a question *only* when a missing detail would
+   change the result. A clear dump passes straight through with zero questions.
+3. **Engineers the prompt** using current prompt-engineering research — right-sized to the
+   task, with explicit output format, the *why* behind the request, and an escape clause.
+4. **Runs it and self-checks** the result against your original intent before showing you.
 
-## Installation
+## Philosophy
 
-### As an OpenClaw Skill
+This is the **anti-cargo-cult** version. Based on Anthropic's prompting guidance plus
+2025–26 research (incl. Wharton's controlled studies), it deliberately *skips* the things
+that don't actually help modern reasoning models:
 
-Copy the `prompt-builder/` directory into your OpenClaw skills folder:
+- ❌ No fake "you are a world-class expert" personas (no reliable accuracy gain)
+- ❌ No stakes / tips / threats / "this is CRITICAL" (no benchmark effect)
+- ❌ No reflexive "think step by step" (adds latency on models that already reason)
+- ✅ Always keeps explicit output-format instructions, context/motivation, and right-sizing
 
-```bash
-# Clone this repo
-git clone https://github.com/amart-builder/prompt-builder.git
+It defaults to the *smallest high-signal prompt* the task needs — not the longest.
 
-# Copy into your OpenClaw workspace
-cp -r prompt-builder/prompt-builder ~/.openclaw/workspace/skills/prompt-builder
-```
+## Install
 
-Then use it in chat:
-```
-/prompt build a REST API for a todo app with auth
-```
+### Claude Code / Claude Cowork
 
-### Standalone
-
-The skill files are plain markdown. You can use them with any AI assistant:
-
-1. Feed `prompt-builder/SKILL.md` as system instructions
-2. Feed the `instructions/` files for the full taxonomy and procedure
-3. Feed `references/soul-library.md` for expert persona selection
-
-## Skill Structure
+Paste this into a fresh chat and let Claude do it:
 
 ```
-prompt-builder/
-├── SKILL.md                          # Entry point
-├── instructions/
-│   ├── procedure.md                  # 10-step generation process
-│   ├── taxonomy.md                   # 9 task types with frameworks
-│   └── context-injection.md          # How to load relevant context
-├── references/
-│   ├── soul-library.md               # 25+ expert identities
-│   ├── framework-templates.md        # Structured templates per task type
-│   ├── framework-examples.md         # 3 worked examples with commentary
-│   └── prompt-library/
-│       └── README.md                 # Saved prompt library structure
-├── templates/
-│   └── output-format.md              # Presentation format
-└── evals/
-    └── evals.json                    # 18 test cases
+Install a custom skill called "prompt" from GitHub:
+
+1. Clone https://github.com/amart-builder/prompt-builder into a temp folder.
+2. Create the directory ~/.claude/skills/ if it doesn't exist.
+3. Copy the repo's prompt/ folder to ~/.claude/skills/prompt
+   (so the files end up at ~/.claude/skills/prompt/SKILL.md and
+   ~/.claude/skills/prompt/reference/prompt-engineering.md).
+4. Confirm both files are in place and tell me the skill is installed.
+
+Then I'll restart the chat so /prompt shows up.
 ```
 
-## Task Types
+After it finishes, **start a new chat** so `/prompt` appears in autocomplete.
 
-| Type | Code | Framework | Best For |
-|------|------|-----------|----------|
-| Coding | SDD | Structured Design Doc | Building features, debugging, refactoring |
-| Research | SAF | Structured Analytical Framework | Deep dives, comparisons, evaluations |
-| Writing | VMC | Voice-Matched Composition | Content, emails, copywriting |
-| Planning | DA | Decision Architecture | Strategy, roadmaps, goal-setting |
-| Data Analysis | PS | Pattern Synthesis | Data transforms, analysis, reporting |
-| Debugging | DP | Diagnostic Protocol | Root cause analysis, troubleshooting |
-| Creative | CB | Creative Brief | Design, brainstorming, ideation |
-| Outreach | RCC | Relationship-Context Communication | Emails, DMs, introductions |
-| Orchestration | CBP | Coordination Blueprint | Multi-agent, workflow, pipeline design |
+### OpenClaw
 
-## The Soul Library
+The same `SKILL.md` format works as an OpenClaw skill — copy the `prompt/` directory into
+your OpenClaw skills folder.
 
-The skill includes 25+ expert identities across 12 categories, backed by research from:
-- Salewski et al. (2023) — "In-Context Impersonation"
-- Li et al. (2023) — "EmotionPrompt"
-- Wang et al. (2023) — "Persona-based Prompting"
-- Reynolds & McDonell (2021) — "Prompt Programming for Large Language Models"
-- Shanahan et al. (2023) — "Role play with large language models"
+## How to use it
 
-The soul selection isn't random — it uses a decision framework based on task complexity, domain depth, and creative requirements.
+You don't need it every time. Use it **when the output really matters.**
 
-## Examples
+```
+/prompt  then brain-dump everything in your head — messy is fine.
+```
 
-**Input:** `build a scraper that handles rate limits gracefully`
+Example dump:
 
-**Output:** A complete SDD (Structured Design Doc) prompt with:
-- Error handling soul selected (Systems Architect + Defensive Programming)
-- Explicit rate limit patterns (exponential backoff, circuit breaker)
-- Test scenarios for failure modes
-- Success criteria: "handles 429s without data loss, resumes cleanly after outages"
+> "ugh i need to email the practice owner who went quiet after our call, keep it warm,
+> remind her we have two other buyers interested but don't sound pushy"
 
-See `references/framework-examples.md` for 3 full worked examples.
+The skill turns that into a clean, complete prompt and writes the email — checking it
+against your intent before showing you.
 
-## License
+## What's in here
 
-MIT — use it however you want.
+```
+prompt/
+  SKILL.md                      the skill instructions (workflow + rules)
+  reference/
+    prompt-engineering.md       the technique reference it builds prompts from
+```
 
-## Author
+---
 
-Built by [amart](https://x.com/amartAI) as part of the Atlas AI system.
+Maintained by [@amart-builder](https://github.com/amart-builder). Built for the Martin
+Healthcare Advisors team and anyone who wants higher-quality output from Claude.
