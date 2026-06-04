@@ -21,7 +21,7 @@ When you type `/prompt` and dump your thoughts, the skill:
 ## Philosophy
 
 This is the **anti-cargo-cult** version. Based on Anthropic's prompting guidance plus
-2025–26 research (incl. Wharton's controlled studies), it deliberately *skips* the things
+2025-26 research (incl. Wharton's controlled studies), it deliberately *skips* the things
 that don't actually help modern reasoning models:
 
 - ❌ No fake "you are a world-class expert" personas (no reliable accuracy gain)
@@ -33,9 +33,38 @@ It defaults to the *smallest high-signal prompt* the task needs, not the longest
 
 ## Install
 
-### Claude Code / Claude Cowork
+### Claude Cowork
 
-Paste this into a fresh chat and let Claude do it:
+Cowork installs skills from a `.skill` file you save, not from a local folder. Paste this
+into a fresh Cowork chat and Claude will build you that file:
+
+```
+Package a reusable Cowork skill called "prompt" for me, then give me the
+installable file so I can save it.
+
+Fetch these two files from GitHub and keep their contents exactly as-is:
+- SKILL.md:
+  https://raw.githubusercontent.com/amart-builder/prompt-builder/main/prompt/SKILL.md
+- reference/prompt-engineering.md:
+  https://raw.githubusercontent.com/amart-builder/prompt-builder/main/prompt/reference/prompt-engineering.md
+
+Build a skill folder with SKILL.md at the top level and the reference file at
+reference/prompt-engineering.md (do not edit the file contents. The "name:
+prompt" line in SKILL.md is what makes /prompt work). Zip that folder into a
+file ending in .skill and present it to me so I get a "Save skill" button.
+
+Do not claim the skill is installed. You can't install it yourself. Just hand
+me the .skill file and tell me to click "Save skill," then start a new chat so
+/prompt shows up in autocomplete.
+```
+
+Click **Save skill** on the file Claude gives you, then **start a new chat** so `/prompt`
+appears in autocomplete.
+
+### Claude Code (CLI)
+
+Claude Code loads skills from your local `~/.claude/skills/` folder, so you can install
+directly. Paste this into a fresh chat:
 
 ```
 Install a custom skill called "prompt" from GitHub:
@@ -46,8 +75,6 @@ Install a custom skill called "prompt" from GitHub:
    (so the files end up at ~/.claude/skills/prompt/SKILL.md and
    ~/.claude/skills/prompt/reference/prompt-engineering.md).
 4. Confirm both files are in place and tell me the skill is installed.
-
-Then I'll restart the chat so /prompt shows up.
 ```
 
 After it finishes, **start a new chat** so `/prompt` appears in autocomplete.

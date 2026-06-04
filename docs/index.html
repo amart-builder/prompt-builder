@@ -814,24 +814,33 @@
       <div class="step reveal">
         <div class="step-num">2</div>
         <div class="step-body">
-          <p>Paste in the setup instructions below and send. Claude will install it for you.</p>
+          <p>Paste the setup instructions below and send. Claude will package it into a skill file for you.</p>
           <div class="codeblock">
             <button class="copy-btn" id="copyBtn">Copy</button>
-<pre id="installPrompt">Install a custom skill called "prompt" from GitHub:
+<pre id="installPrompt">Package a reusable Cowork skill called "prompt" for me, then give me the
+installable file so I can save it.
 
-1. Clone https://github.com/amart-builder/prompt-builder into a temp folder.
-2. Create the directory ~/.claude/skills/ if it doesn't exist.
-3. Copy the repo's prompt/ folder to ~/.claude/skills/prompt
-   (so the files end up at ~/.claude/skills/prompt/SKILL.md and
-   ~/.claude/skills/prompt/reference/prompt-engineering.md).
-4. Confirm both files are in place and tell me the skill is installed.</pre>
+Fetch these two files from GitHub and keep their contents exactly as-is:
+- SKILL.md:
+  https://raw.githubusercontent.com/amart-builder/prompt-builder/main/prompt/SKILL.md
+- reference/prompt-engineering.md:
+  https://raw.githubusercontent.com/amart-builder/prompt-builder/main/prompt/reference/prompt-engineering.md
+
+Build a skill folder with SKILL.md at the top level and the reference file at
+reference/prompt-engineering.md (do not edit the file contents. The "name:
+prompt" line in SKILL.md is what makes /prompt work). Zip that folder into a
+file ending in .skill and present it to me so I get a "Save skill" button.
+
+Do not claim the skill is installed. You can't install it yourself. Just hand
+me the .skill file and tell me to click "Save skill," then start a new chat so
+/prompt shows up in autocomplete.</pre>
           </div>
         </div>
       </div>
       <div class="step reveal">
         <div class="step-num">3</div>
         <div class="step-body">
-          <p>When it says it's done, <strong>start a fresh chat.</strong> Type <span style="font-family:'SF Mono',monospace">/</span> and you'll see <span style="font-family:'SF Mono',monospace;color:var(--accent)">prompt</span> in the list.</p>
+          <p>Click <strong>Save skill</strong> on the file Claude hands you, then <strong>start a fresh chat.</strong> Type <span style="font-family:'SF Mono',monospace">/</span> and you'll see <span style="font-family:'SF Mono',monospace;color:var(--accent)">prompt</span> in the list.</p>
           <p class="sub">A restart is what makes the new tool show up, just like closing and reopening an app after an update.</p>
         </div>
       </div>
