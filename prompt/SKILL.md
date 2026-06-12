@@ -16,7 +16,7 @@ description: >-
 Turn raw, unorganized thoughts into an excellent outcome: **clarify → engineer the
 prompt or spec → show it and get the OK → run it → verify.** This works whether the
 goal is to *write* something (an email, a summary) or to *build or do* something (make a
-page, set up a repo, run an analysis). Opus 4.8 does its best work from a clear, complete
+page, set up a repo, run an analysis). Fable 5 does its best work from a clear, complete
 spec given upfront and follows instructions literally, so the skill front-loads the messy
 dump into the clean spec the model wants. Technique reference: `reference/prompt-engineering.md`.
 
@@ -44,21 +44,26 @@ should pass straight through with zero questions. That's the goal, not the excep
 A cheap wrong guess beats a question that costs the user's attention.
 
 ### 3. Engineer the prompt (or build spec)
-Build it using `reference/prompt-engineering.md`. **Right-size it.** Opus 4.8 follows
+Build it using `reference/prompt-engineering.md`. **Right-size it.** Fable 5 follows
 literally, so bloat hurts. Apply only what the task needs:
 - Structure with XML tags, and **state the output format explicitly and positively.**
 - Add a role only for **tone/voice/audience**, never as a fake "expert" accuracy boost.
 - Add chain-of-thought / step-by-step **only** for genuinely multi-step tasks; skip it on
-  simple ones (Opus 4.8 reasons natively, so default CoT is mostly latency).
+  simple ones (Fable 5 reasons natively, so default CoT is mostly latency).
+- If the prompt involves tools, search, or other optional capabilities, state **when** to
+  use each one ("when the answer depends on current info, search first"), not just that it
+  exists. Fable 5 reaches for capabilities conservatively unless given trigger conditions.
 - Include an **escape clause** ("if unsure, say so") and explicit **scope**.
 - Before finishing, **scan for contradictions** and cut anything that isn't high-signal
   (right altitude: specific enough to guide, not so rigid it's brittle).
 
 **Writing task vs build task.** If the goal is to *write* something, the artifact is a
 **prompt**. If the goal is to *build or do* something (a page, a repo, an analysis,
-multi-step work), the artifact is a tight **spec**: the goal, the steps in order, the
-constraints, and how each step gets verified. Same discipline, different shape. Either
-way, you show it and wait for approval before doing the work.
+multi-step work), the artifact is a tight **spec**: a goal stated so "done" is checkable,
+the steps in order, the constraints, and how each step gets verified. Grant autonomy on
+minor choices ("pick a reasonable default and note it") so the run doesn't stall on
+questions. Same discipline, different shape. Either way, you show it and wait for
+approval before doing the work.
 
 ### 4. Show it, get the OK, then run
 1. **One plain-English line first.** Say what the prompt or spec does and the key choices
