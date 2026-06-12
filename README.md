@@ -1,11 +1,11 @@
 # /prompt: turn a brain-dump into a great result
 
 A Claude skill that takes your messy, unorganized thoughts and turns them into an
-excellent outcome: **clarify → engineer the prompt → run it → verify.**
+excellent outcome: **clarify → engineer the prompt → show it for your OK → run it → verify.**
 
 You don't write the perfect prompt. You brain-dump everything in your head (messy is
 fine), and the skill builds the clean, complete prompt that modern Claude does its best
-work from, then runs it for you.
+work from, shows it to you for approval, then runs it for you.
 
 ## What it does
 
@@ -16,7 +16,9 @@ When you type `/prompt` and dump your thoughts, the skill:
    change the result. A clear dump passes straight through with zero questions.
 3. **Engineers the prompt** using current prompt-engineering research, right-sized to the
    task, with explicit output format, the *why* behind the request, and an escape clause.
-4. **Runs it and self-checks** the result against your original intent before showing you.
+4. **Shows you the prompt and waits for your OK.** It appears in a code block, so you can
+   approve it, tweak it, or save it for reuse before anything runs.
+5. **Runs it and self-checks** the result against your original intent before showing you.
 
 ## Philosophy
 
@@ -30,6 +32,10 @@ that don't actually help modern reasoning models:
 - ✅ Always keeps explicit output-format instructions, context/motivation, and right-sizing
 
 It defaults to the *smallest high-signal prompt* the task needs, not the longest.
+
+Tuned for **Claude Fable 5** (and recent Opus models): a complete spec up front, literal
+instruction following, trigger conditions for any tools involved, and checkable "done"
+criteria on build specs.
 
 ## Install
 
